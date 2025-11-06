@@ -13,64 +13,63 @@ with open(os.path.join(__location__, 'Cities.csv')) as f:
 for city in cities[:5]:
     print(city)
 
-# Print the average temperature of all the cities
-print("The average temperature of all the cities:")
-temps = []
-for city in cities:
-    temps.append(float(city['temperature']))
-print(sum(temps)/len(temps))
-print()
+# Let's write a function to filter out only items that meet the condition
+# Hint: condition will be associated with an anonymous function, e.x., lamdbda x: max(x)
+def filter(condition, dict_list):
+    temps = []
+    for item in dict_list:
+        if condition(item):
+            temps.append(item)
+    return temps
+
+"""
+filtered_list = filter(lambda x: x['country'] == ['Germany'], cities)
+print(filtered_list)
+"""
+
+# Let's write a function to do aggregation given an aggregation function and an aggregation key
+def aggregate(aggregation_key, aggregation_function, dict_list):
+    temp = []
+    for item in dict_list:
+        temp.append(item[aggregation_key])
+    return aggregation_function(temp)
 
 # Print the average temperature of all the cities
 print("The average temperature of all the cities:")
-temps = [float(city['temperature']) for city in cities]
-print(sum(temps)/len(temps))
+temp1 = aggregate('temperature', lambda x: sum([float(i) for i in x]) / len(x), cities)
+print(temp1)
 print()
 
 # Print all cities in Germany
 print("All cities in Germany:")
-temp1 = []
-for i in cities:
-    if i['country'] == 'Germany':
-        temp1.append(i['city'])
-print(temp1)
+temp2 = filter(lambda x: x['country'] == 'Germany', cities)
+print([c['city'] for c in temp2])
 print()
 
 # Print all cities in Spain with a temperature above 12°C
 print("All cities in Spain with a temperature above 12°C:")
-temp2 = []
-for i in cities:
-    if i['country'] == 'Spain':
-        if float(i['temperature']) > 12:
-            temp2.append(i['city'])
-print(temp2)
+temp3 = filter(lambda x: x['country'] == 'Spain' and float(x['temperature']) > 12, cities)
+print([c['city'] for c in temp3])
 print()
 
 # Count the number of unique countries
-print('The number of unique countries')
-temp3 = []
-for i in cities:
-    temp3.append(i['country'])
-print(len(set(temp3)))
+print("The number of unique countries:")
+temp4 = set([c['country'] for c in cities])
+print(len(temp4))
 print()
 
 
 # Print the average temperature for all the cities in Germany
-print('The average temperature for all the cities in Germany')
-su = []
-for i in cities:
-    if i['country'] == 'Germany':
-        su.append(i['temperature'])
-tota = 0
-for i in su:
-    tota += float(i)
-print(tota/len(su))
+temp5 = aggregate('temperature',
+                        lambda x: sum([float(i) for i in x]) / len(x),
+                        filter(lambda x: x['country'] == 'Germany', cities))
+print(temp5)
 print()
 
 # Print the max temperature for all the cities in Italy
-print('The max temperature for all the cities in Italy')
-temp4 = []
-for i in cities:
-    if i['country'] == 'Italy':
-        temp4.append(i['temperature'])
-print(max(temp4))
+print("The max temperature for all the cities in Italy:")
+temp6 = aggregate('temperature',
+                      lambda x: max([float(i) for i in x]),
+                      filter(lambda x: x['country'] == 'Italy', cities))
+print(temp6)
+print()
